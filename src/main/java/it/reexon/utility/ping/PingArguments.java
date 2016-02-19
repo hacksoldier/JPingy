@@ -115,19 +115,7 @@ public class PingArguments
      */
     private String windowsCommand()
     {
-        StringBuilder command = new StringBuilder();
-
-        command.append("ping").append(" ");
-        if (this.count != null)
-            command.append("-n").append(" ").append(count).append(" ");
-        if (this.timeout != null)
-            command.append("-w").append(" ").append(timeout).append(" ");
-        if (this.payload_bytes != null)
-            command.append("-l").append(" ").append(payload_bytes).append(" ");
-
-        command.append(url);
-
-        return command.toString();
+        return this.createCommand("-n", "-w", "-l");
     }
 
     /**
@@ -137,15 +125,6 @@ public class PingArguments
     private String unixCommand()
     {
         return createCommand("-c", "-W", "-s");
-        //        StringBuilder command = new StringBuilder();
-        //
-        //        command.append("ping").append(" ");
-        //        command.append("-c").append(" ").append(count).append(" ");
-        //        command.append("-W").append(" ").append(timeout).append(" ");
-        //        command.append("-s").append(" ").append(payload_bytes).append(" ");
-        //        command.append(url);
-        //
-        //        return command.toString();
     }
 
     /**
@@ -171,9 +150,12 @@ public class PingArguments
         StringBuilder command = new StringBuilder();
 
         command.append("ping").append(" ");
-        command.append(count).append(" ").append(this.count).append(" ");
-        command.append(timeout).append(" ").append(this.timeout).append(" ");
-        command.append(payload_bytes).append(" ").append(this.payload_bytes).append(" ");
+        if (this.count != null)
+            command.append(count).append(" ").append(this.count).append(" ");
+        if (this.timeout != null)
+            command.append(timeout).append(" ").append(this.timeout).append(" ");
+        if (this.payload_bytes != null)
+            command.append(payload_bytes).append(" ").append(this.payload_bytes).append(" ");
         command.append(url);
 
         return command.toString();
