@@ -3,26 +3,33 @@
  */
 package it.reexon.utility.ping;
 
+import org.apache.commons.lang3.StringUtils;
+
+import it.reexon.utility.ping.enums.SystemEnum;
+
+
 /**
  * @author marco.velluto
  */
 public class PingArguments
 {
-    String url;
-    Integer count;
-    Long timeout;
-    Integer payload_bytes;
-    Integer interval;
-    Integer ttl;
+    private String url;
+    private Integer count;
+    private Long timeout;
+    private Integer payload_bytes;
+    private Integer interval;
+    private Integer ttl;
+    private SystemEnum system;
 
     public static class Builder
     {
 
         private PingArguments arguments;
 
-        public Builder()
+        public Builder(SystemEnum systemEnum)
         {
             this.arguments = new PingArguments();
+            this.arguments.setSystem(systemEnum);
         }
 
         public Builder setUrl(String url)
@@ -72,4 +79,154 @@ public class PingArguments
             return arguments;
         }
     }
+
+    /**
+     * -c       Send N packets specified with -c
+     * @return
+     */
+    //Unix Systems
+    public String getCommand()
+    {
+        if (StringUtils.isBlank(this.url))
+            throw new IllegalArgumentException("URL is mandatory");
+
+        if (this.system == SystemEnum.UNIX)
+        {
+            return this.unixCommand();
+        }
+        else if (this.system == SystemEnum.WINDOWS)
+        {
+            return this.windowsCommand();
+        }
+        else
+        {
+            throw new RuntimeException("Not foud command to system: " + this.system);
+        }
+    }
+
+    /**
+     * -n Count         Determines the number of echo requests to send. The default is 4 requests.
+     * -w Timeout       Enables you to adjust the time-out (in milliseconds). The default is 1,000 (a 1-second time-out).
+     * -l Size          Enables you to adjust the size of the ping packet. The default size is 32 bytes.
+     * -f               Sets the Do Not Fragment bit on the ping packet. By default, the ping packet allows fragmentation.
+     * 
+     * @see https://technet.microsoft.com/en-us/library/cc737478(v=ws.10).aspx
+     * @return
+     */
+    private String windowsCommand()
+    {
+        StringBuilder command = new StringBuilder();
+
+        command.append("ping").append(" ");
+        if (this.count != null)
+            command.append("-n").append(" ").append(count).append(" ");
+        if (this.timeout != null)
+            command.append("-w").append(" ").append(timeout).append(" ");
+        if (this.payload_bytes != null)
+            command.append("-l").append(" ").append(payload_bytes).append(" ");
+
+        command.append(url);
+
+        return command.toString();
+    }
+
+    /**
+     * @see http://www.thegeekstuff.com/2009/11/ping-tutorial-13-effective-ping-command-examples/
+     * @return
+     */
+    private String unixCommand()
+    {
+        return createCommand("-c", "-W", "-s");
+        //        StringBuilder command = new StringBuilder();
+        //
+        //        command.append("ping").append(" ");
+        //        command.append("-c").append(" ").append(count).append(" ");
+        //        command.append("-W").append(" ").append(timeout).append(" ");
+        //        command.append("-s").append(" ").append(payload_bytes).append(" ");
+        //        command.append(url);
+        //
+        //        return command.toString();
+    }
+
+    /**
+     * 
+     * @param coutn 
+     *          * (Windows: -c) 
+     *          * (Unix: -n)
+     *          
+     * @param timeout 
+     *                  * (Windows: -w) 
+     *                  * (Unix: -W)
+     *                  
+     * @param payload_bytes
+     *                  * (Windows: -l)
+     *                  * (Unix: -s)
+     * @return
+     */
+    private String createCommand(String count, String timeout, String payload_bytes)
+    {
+        if (StringUtils.isBlank(this.url))
+            throw new IllegalArgumentException("URL is mandatory");
+
+        StringBuilder command = new StringBuilder();
+
+        command.append("ping").append(" ");
+        command.append(count).append(" ").append(this.count).append(" ");
+        command.append(timeout).append(" ").append(this.timeout).append(" ");
+        command.append(payload_bytes).append(" ").append(this.payload_bytes).append(" ");
+        command.append(url);
+
+        return command.toString();
+    }
+
+    public String getUrl()
+    {
+        return url;
+    }
+
+    public void setUrl(String url)
+    {
+        this.url = url;
+    }
+
+    public Integer getCount()
+    {
+        return count;
+    }
+
+    public void setCount(Integer count)
+    {
+        this.count = count;
+    }
+
+    public Long getTimeout()
+    {
+        return timeout;
+    }
+
+    public void setTimeout(Long timeout)
+    {
+        this.timeout = timeout;
+    }
+
+    public Integer getPayload_bytes()
+    {
+        return payload_bytes;
+    }
+
+    public void setPayload_bytes(Integer payload_bytes)
+    {
+        this.payload_bytes = payload_bytes;
+    }
+
+    public SystemEnum getSystem()
+    {
+        return system;
+    }
+
+    public void setSystem(SystemEnum system)
+    {
+        this.system = system;
+    }
+
 }

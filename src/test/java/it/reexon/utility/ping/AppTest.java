@@ -10,6 +10,7 @@ import java.util.Date;
 
 import org.junit.Test;
 
+import it.reexon.utility.ping.enums.SystemEnum;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
@@ -43,7 +44,7 @@ public class AppTest extends TestCase
     /**
      * Rigourous Test :-)
      */
-    public void testApp()
+    public void appTest()
     {
         String ip = "127.0.0.1";
         String pingResult = "";
@@ -118,7 +119,11 @@ public class AppTest extends TestCase
     public void testPingArguments()
     {
         //@f:off
-        PingArguments pingArguments = new PingArguments.Builder()
+        PingArguments pingArguments = null;
+        String pingCommand = null;
+        
+        // WINDOWS
+        pingArguments = new PingArguments.Builder(SystemEnum.WINDOWS)
                 .setBytes(56)
                 .setCount(55)
                 .setInterval(54)
@@ -126,13 +131,27 @@ public class AppTest extends TestCase
                 .setTtl(554)
                 .setUrl("www.google.it")
             .build();
+        pingCommand = pingArguments.getCommand();
+        assertEquals("ping -n 55 -w 36666 -l 56 www.google.it", pingCommand);
+        
+        //UNIX
+        pingArguments = new PingArguments.Builder(SystemEnum.UNIX)
+                .setBytes(56)
+                .setCount(55)
+                .setInterval(54)
+                .setTimeout(36666)
+                .setTtl(554)
+                .setUrl("www.google.it")
+            .build();
+        pingCommand = pingArguments.getCommand();
+        assertEquals("ping -c 55 -W 36666 -s 56 www.google.it", pingCommand);
         //@f:on
     }
 
     @Test
     public void mainTest()
     {
-        testApp();
+        //        testApp();
         assertTrue(true);
     }
 

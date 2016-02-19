@@ -6,19 +6,29 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Date;
+
 
 /**
  * Hello world!
  *
  */
-public class App 
+public class App
 {
-    public static void main( String[] args )
-    {
-        String ip = "127.0.0.1";
-        String pingResult = "";
+    public static final int SECONDS_ONE_DAY = 86400;
 
-        String pingCmd = "ping " + ip;
+    public static void main(String[] args)
+    {
+
+        final String PING_INTEVAL_SECONDS = "1";
+
+        String ip = "www.google.it";
+
+        StringBuffer pingCmd = new StringBuffer("ping ");
+        pingCmd.append(" -t");
+        pingCmd.append(" -i " + PING_INTEVAL_SECONDS);
+        pingCmd.append(" " + ip);
+
         BufferedReader reader = null;
         BufferedWriter writer = null;
         try
@@ -27,16 +37,19 @@ public class App
             writer = new BufferedWriter(new FileWriter(file, true));
 
             Runtime r = Runtime.getRuntime();
-            Process p = r.exec(pingCmd);
-
+            Process p = r.exec(pingCmd.toString());
             reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String inputLine;
-            while ((inputLine = reader.readLine()) != null)
+            int c = 0;
+            while ((inputLine = reader.readLine()) != null && c < SECONDS_ONE_DAY)
             {
-                System.out.println(inputLine);
+                c++;
+                Date date = new Date();
+                String message = createMessage(inputLine, date);
+
+                System.out.println(message);
                 writer.newLine();
-                writer.write(inputLine);
-                pingResult += inputLine;
+                writer.write(message);
             }
             writer.flush();
         }
@@ -66,4 +79,14 @@ public class App
             }
         }
     }
+
+    private static String createMessage(String inputLine, Date date)
+    {
+        StringBuilder message = new StringBuilder();
+        message.append(date + " ");
+        message.append(inputLine);
+
+        return message.toString();
+    }
+
 }
