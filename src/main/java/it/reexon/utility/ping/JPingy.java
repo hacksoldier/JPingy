@@ -38,7 +38,7 @@ public class JPingy
      * 
      * @return
      */
-    public Boolean run()
+    public void run()
     {
         BufferedReader reader = null;
         BufferedWriter writer = null;
@@ -73,13 +73,10 @@ public class JPingy
             }
             writer.newLine();
             writer.write(createMessage("END PROCESS", new Date()));
-
-            return true;
         }
         catch (IOException e)
         {
             System.err.println(e);
-            return false;
         }
         finally
         {
