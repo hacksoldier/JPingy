@@ -1,5 +1,6 @@
 package it.reexon.utility.ping;
 
+import java.awt.Frame;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -8,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Date;
 
+import it.reexon.utility.ping.enums.SystemEnum;
+
 
 /**
  * Hello world!
@@ -15,19 +18,16 @@ import java.util.Date;
  */
 public class App
 {
-    public static final int SECONDS_ONE_DAY = 86400;
 
     public static void main(String[] args)
     {
 
-        final String PING_INTEVAL_SECONDS = "1";
+        final int SECONDS_ONE_DAY = 86400;
+        final Boolean realtimePrint = true;
 
-        String ip = "www.google.it";
-
-        StringBuffer pingCmd = new StringBuffer("ping ");
-        pingCmd.append(" -t");
-        pingCmd.append(" -i " + PING_INTEVAL_SECONDS);
-        pingCmd.append(" " + ip);
+        PingArguments pingArguments = new PingArguments.Builder(SystemEnum.WINDOWS).build();
+        pingArguments.setCount(SECONDS_ONE_DAY);
+        pingArguments.setUrl("www.google.it");
 
         BufferedReader reader = null;
         BufferedWriter writer = null;
@@ -37,21 +37,29 @@ public class App
             writer = new BufferedWriter(new FileWriter(file, true));
 
             Runtime r = Runtime.getRuntime();
-            Process p = r.exec(pingCmd.toString());
+            Process p = r.exec(pingArguments.getCommand());
             reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String inputLine;
             int c = 0;
-            while ((inputLine = reader.readLine()) != null && c < SECONDS_ONE_DAY)
+            Frame f = new Frame("Ping");
+            while ((inputLine = reader.readLine()) != null && c < pingArguments.getCount())
             {
                 c++;
                 Date date = new Date();
-                String message = createMessage(inputLine, date);
+
+                String message = "";
+                message = createMessage(pingArguments.getCommand(), date);
+                writer.newLine();
+                message = createMessage(inputLine, date);
 
                 System.out.println(message);
-                writer.newLine();
+                if (realtimePrint)
+                    writer.flush();
+
                 writer.write(message);
             }
-            writer.flush();
+            writer.newLine();
+            writer.write(createMessage("END", new Date()));
         }
         catch (IOException e)
         {
@@ -72,6 +80,7 @@ public class App
             {
                 try
                 {
+                    writer.flush();
                     writer.close();
                 }
                 catch (IOException e)
