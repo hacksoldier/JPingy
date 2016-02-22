@@ -1,6 +1,5 @@
 package it.reexon.utility.ping;
 
-import java.awt.Frame;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -41,7 +40,6 @@ public class App
             reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String inputLine;
             int c = 0;
-            Frame f = new Frame("Ping");
             while ((inputLine = reader.readLine()) != null && c < pingArguments.getCount())
             {
                 c++;
