@@ -73,17 +73,19 @@ public class JPingy
             }
             writer.newLine();
             writer.write(createMessage("END PROCESS", new Date()));
+
+            return true;
         }
         catch (IOException e)
         {
             System.err.println(e);
+            return false;
         }
         finally
         {
             closeReader(reader);
             closeWriter(writer);
         }
-        return null;
     }
 
     /**
