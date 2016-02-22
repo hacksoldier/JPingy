@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Created-By: Marco Velluto 
+Specification-Title: Java Utility Classes
+Main-Class: .utility.ping.src.main.java.it.reexon.utility.ping.App
