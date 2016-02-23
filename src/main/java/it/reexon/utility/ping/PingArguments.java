@@ -211,4 +211,24 @@ public class PingArguments
         this.system = system;
     }
 
+    public Integer getInterval()
+    {
+        return interval;
+    }
+
+    public void setInterval(Integer interval)
+    {
+        this.interval = interval;
+    }
+
+    public Integer getTtl()
+    {
+        return ttl;
+    }
+
+    public void setTtl(Integer ttl)
+    {
+        this.ttl = ttl;
+    }
+
 }
