@@ -1,5 +1,5 @@
 /**
- * 
+ Copyright (c) 2016 Marco Velluto
  */
 package it.reexon.utility.ping;
 
@@ -14,10 +14,6 @@ import java.util.Date;
 import it.reexon.utility.ping.enums.SystemEnum;
 
 
-/**
- * @author marco.velluto
- *
- */
 public class JPingy
 {
 
