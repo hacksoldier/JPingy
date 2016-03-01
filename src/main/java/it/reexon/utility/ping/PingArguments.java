@@ -1,4 +1,4 @@
-/**
+/** Copyright (c) 2016 Marco Velluto
  * 
  */
 package it.reexon.utility.ping;

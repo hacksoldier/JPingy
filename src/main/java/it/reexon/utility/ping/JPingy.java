@@ -9,7 +9,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import it.reexon.utility.ping.enums.SystemEnum;
 
@@ -38,7 +40,7 @@ public class JPingy
     {
         BufferedReader reader = null;
         BufferedWriter writer = null;
-
+        Process process = null;
         try
         {
             File file = new File(this.location + this.fileName);
@@ -51,11 +53,12 @@ public class JPingy
             pingArguments.setCount(this.count);
 
             Runtime runtime = Runtime.getRuntime();
-            Process process = runtime.exec(pingArguments.getCommand());
+            process = runtime.exec(pingArguments.getCommand());
             reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             write(writer, createMessage(pingArguments.getCommand(), new Date()));
 
             String inputLine;
+            List<String> linesResult = new ArrayList<String>();
             while ((inputLine = reader.readLine()) != null)
             {
                 Date date = new Date();
@@ -66,9 +69,11 @@ public class JPingy
                 System.out.println(message);
 
                 write(writer, message);
+                linesResult.add(inputLine);
             }
             writer.newLine();
             writer.write(createMessage("END PROCESS", new Date()));
+            analyzeResult(linesResult);
         }
         catch (IOException e)
         {
@@ -78,7 +83,14 @@ public class JPingy
         {
             closeReader(reader);
             closeWriter(writer);
+            process.destroy();
         }
+    }
+
+    private void analyzeResult(List<String> linesResult)
+    {
+        // TODO Auto-generated method stub
+        
     }
 
     /**
