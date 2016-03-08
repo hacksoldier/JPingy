@@ -25,11 +25,19 @@ public class JPingy
     private String fileName;
     private String location = "C:\\TEMP\\";
     private Integer count;
+    private String url;
 
-    public JPingy(String fileName)
+    /**
+     * 
+     * @param fileName
+     * @param count
+     */
+    public JPingy(String fileName, String url, int count)
     {
         super();
         this.fileName = fileName;
+        this.count = count;
+        this.url = url;
     }
 
     /**
@@ -39,17 +47,14 @@ public class JPingy
     public void run()
     {
         BufferedReader reader = null;
-        BufferedWriter writer = null;
         Process process = null;
-        try
+        File file = new File("C:\\TEMP\\" + fileName);
+        PingArguments pingArguments = new PingArguments.Builder(SystemEnum.WINDOWS).build().setUrl(url);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true)))
         {
-            File file = new File(this.location + this.fileName);
-            writer = new BufferedWriter(new FileWriter(file, true));
-
             writer.write(createMessage("BEGIN PROCESS", new Date()));
             writer.newLine();
 
-            PingArguments pingArguments = new PingArguments.Builder(SystemEnum.WINDOWS).build();
             pingArguments.setCount(this.count);
 
             Runtime runtime = Runtime.getRuntime();
@@ -75,48 +80,23 @@ public class JPingy
             writer.write(createMessage("END PROCESS", new Date()));
             analyzeResult(linesResult);
         }
-        catch (IOException e)
+        catch (Exception e)
         {
             System.err.println(e);
         }
         finally
         {
             closeReader(reader);
-            closeWriter(writer);
-            process.destroy();
+            if (process != null)
+                process.destroy();
         }
     }
 
+    @SuppressWarnings("unused")
     private void analyzeResult(List<String> linesResult)
     {
         // TODO Auto-generated method stub
-        
-    }
 
-    /**
-     * 
-     * @param writer
-     */
-    private void closeWriter(BufferedWriter writer)
-    {
-        if (writer != null)
-        {
-            try
-            {
-                writer.flush();
-            }
-            catch (IOException e)
-            {}
-            finally
-            {
-                try
-                {
-                    writer.close();
-                }
-                catch (IOException e)
-                {}
-            }
-        }
     }
 
     /**
