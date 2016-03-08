@@ -166,9 +166,10 @@ public class PingArguments
         return url;
     }
 
-    public void setUrl(String url)
+    public PingArguments setUrl(String url)
     {
         this.url = url;
+        return this;
     }
 
     public Integer getCount()
